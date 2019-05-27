@@ -35,7 +35,7 @@ Vagrant.configure("2") do |config|
       vm1.vm.provision "shell", :inline => <<-SHELL
         sudo echo -e 'nameserver 8.8.8.8\nnameserver 8.8.4.4\n' > /etc/resolv.conf
         sudo echo "192.168.200.10 puppet" | sudo tee -a /etc/hosts
-        sudo echo "192.168.200.20 agent" | sudo tee -a /etc/hosts
+        sudo echo "192.168.200.20 autentiaweb" | sudo tee -a /etc/hosts
         sudo echo "*" | sudo tee -a /etc/puppetlabs/puppet/autosign.conf
         sudo echo "autosign = true" | sudo tee -a /etc/puppetlabs/puppet/puppet.conf
         sudo echo "[main]" | sudo tee -a /etc/puppetlabs/puppet/puppet.conf
@@ -58,10 +58,10 @@ Vagrant.configure("2") do |config|
 
   config.ssh.forward_agent = true
 
-  config.vm.define "agent" do |vm2|
+  config.vm.define "autentiaweb" do |vm2|
 
     vm2.vm.box              = "generic/ubuntu1604"
-      vm2.vm.hostname         = "agent"
+      vm2.vm.hostname         = "autentiaweb"
       vm2.vm.box_check_update = true
  
       vm2.vm.network :private_network,
@@ -80,10 +80,10 @@ Vagrant.configure("2") do |config|
       vm2.vm.provision "shell", :inline => <<-SHELL
         sudo echo -e 'nameserver 8.8.8.8\nnameserver 8.8.4.4\n' > /etc/resolv.conf
         sudo echo "192.168.200.10 puppet" | sudo tee -a /etc/hosts
-        sudo echo "192.168.200.20 agent" | sudo tee -a /etc/hosts
+        sudo echo "192.168.200.20 autentiaweb" | sudo tee -a /etc/hosts
         sudo echo "autosign = true" | sudo tee -a /etc/puppetlabs/puppet/puppet.conf
         sudo echo "[main]" | sudo tee -a /etc/puppetlabs/puppet/puppet.conf
-        sudo echo -e "certname = agent\nserver = puppet\nenvironment = production\nruninterval = 15m" | sudo tee -a /etc/puppetlabs/puppet/puppet.conf        
+        sudo echo -e "certname = autentiaweb\nserver = puppet\nenvironment = production\nruninterval = 15m" | sudo tee -a /etc/puppetlabs/puppet/puppet.conf        
       SHELL
 
       vm2.vm.provision "shell", :inline => <<-SHELL
