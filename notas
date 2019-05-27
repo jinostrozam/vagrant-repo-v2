@@ -4,7 +4,7 @@ Ejecutar los siguintes comandos en el puppetserver:
 source /etc/lsb-release
 cd /etc/puppetlabs/code/environments
 sudo mv production production.orig
-sudo git clone https://github.com/jinostrozam/ctrl-repo-puppet-server-vagrant-lab.git production
+sudo git clone https://github.com/jinostrozam/puppet-repo-v2.git production
 cd production
 sudo git checkout production
 sudo /opt/puppetlabs/puppet/bin/gem install r10k --no-rdoc --no-ri
