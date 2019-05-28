@@ -51,6 +51,19 @@ Vagrant.configure("2") do |config|
         sudo echo "provisioner ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers.d/10_provisioner
       SHELL
 
+      vm1.vm.provision "shell", :inline => <<-SHELL
+        source /etc/lsb-release
+        cd /etc/puppetlabs/code/environments
+        sudo mv production production.orig
+        sudo git clone https://github.com/jinostrozam/puppet-repo-v2.git production
+        cd production
+        sudo git checkout production
+        sudo /opt/puppetlabs/puppet/bin/gem install r10k --no-rdoc --no-ri
+        sudo /opt/puppetlabs/puppet/bin/r10k puppetfile install --verbose
+        sudo /opt/puppetlabs/bin/puppet apply --environment=production /etc/puppetlabs/code/environments/production/manifests/
+      SHELL
+
+
       #vm1.vm.provision "shell", path: "scripts/puppify.sh"
 
   end
@@ -87,13 +100,15 @@ Vagrant.configure("2") do |config|
       SHELL
 
       vm2.vm.provision "shell", :inline => <<-SHELL
-      sudo /usr/sbin/adduser --disabled-password --shell /bin/bash --gecos "user" provisioner
-      sudo mkdir -p /home/provisioner/.ssh/
-      sudo touch /home/provisioner/.ssh/authorized_keys
-      sudo echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDIKOhhhOhFJnyDCt90PIMElvS1CiIxAW6lyea5K56+pKYt9diY2++6mdnOpN0eBc6/1KBGzbA4k20aTd+XzXqmdeGYH+MdqEZPlu2HwuJof4SB9uOOS6Wp0mBr02LUIuRbBCR0qjZNY0kRit1PRHlMNQXWq8JnpMd/DaBAY9tbLsbASilwmrfmpsJbVOdtJpX1QaRpHZiO4Ybl+tPR1Ys4AeaUOmQ6cjEDa5tTxRzva9F9odxAYTQYxZkMPGSogMABzG2uz6aCY8dAZ9RpsUtPxNsIHn3SN+pGYol89eDH+VbkuDp7gn7LiNkVB0bQvUPshuf0LH+BWbOGN9nRcbuF provisioner" | sudo tee -a /home/provisioner/.ssh/authorized_keys
-      sudo touch /etc/sudoers.d/10_provisioner
-      sudo echo "provisioner ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers.d/10_provisioner
-    SHELL
-    
+        sudo /usr/sbin/adduser --disabled-password --shell /bin/bash --gecos "user" provisioner
+        sudo mkdir -p /home/provisioner/.ssh/
+        sudo touch /home/provisioner/.ssh/authorized_keys
+        sudo echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDIKOhhhOhFJnyDCt90PIMElvS1CiIxAW6lyea5K56+pKYt9diY2++6mdnOpN0eBc6/1KBGzbA4k20aTd+XzXqmdeGYH+MdqEZPlu2HwuJof4SB9uOOS6Wp0mBr02LUIuRbBCR0qjZNY0kRit1PRHlMNQXWq8JnpMd/DaBAY9tbLsbASilwmrfmpsJbVOdtJpX1QaRpHZiO4Ybl+tPR1Ys4AeaUOmQ6cjEDa5tTxRzva9F9odxAYTQYxZkMPGSogMABzG2uz6aCY8dAZ9RpsUtPxNsIHn3SN+pGYol89eDH+VbkuDp7gn7LiNkVB0bQvUPshuf0LH+BWbOGN9nRcbuF provisioner" | sudo tee -a /home/provisioner/.ssh/authorized_keys
+        sudo touch /etc/sudoers.d/10_provisioner
+        sudo echo "provisioner ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers.d/10_provisioner
+      SHELL
+
+      vm2.vm.provision :shell, inline: 'sudo /opt/puppetlabs/bin/puppet agent -t'
+
   end
 end
