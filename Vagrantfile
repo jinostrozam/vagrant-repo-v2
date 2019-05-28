@@ -108,7 +108,5 @@ Vagrant.configure("2") do |config|
         sudo echo "provisioner ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers.d/10_provisioner
       SHELL
 
-      vm2.vm.provision :shell, inline: 'sudo /opt/puppetlabs/bin/puppet agent -t'
-
   end
 end
